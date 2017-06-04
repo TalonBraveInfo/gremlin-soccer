@@ -1,0 +1,1 @@
+EXTERN int	read_config_file(void);EXTERN void	write_config_file(void);

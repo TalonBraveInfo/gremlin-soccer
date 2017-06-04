@@ -1,0 +1,1 @@
+// Menus.hEXTERN void		DoMenuCommand(long menuResult);EXTERN void		InstallMenus(void);EXTERN Boolean	DoAdjustMenus(WindowPtr window);EXTERN Boolean	gShowFPS;EXTERN Boolean	gGameOn;EXTERN Boolean	gTrueColor;EXTERN Boolean	gUseQuickdraw;EXTERN Boolean	gQuitting;EXTERN Boolean	gDebugMode;

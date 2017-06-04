@@ -1,0 +1,1 @@
+EXTERN void GetSLOTinfo(void);EXTERN void	write_data_to_slot(int slot);EXTERN void	load_data_from_slot(int slot);EXTERN char				   *slot_names[];EXTERN char				   *slot_TITLE;EXTERN char					slot_TITLETEXT[25];EXTERN char					Slotversion;	EXTERN char					SlotSTRING[20];EXTERN char					SlotExists;		EXTERN long					SlotNumber;	

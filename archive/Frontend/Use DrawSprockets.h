@@ -1,0 +1,1 @@
+EXTERN void InitDrawSprockets(void);EXTERN void KillDrawSprockets(void);EXTERN DSpContextAttributes theScreen;EXTERN DSpContextAttributes myRealAttributes;//EXTERN DSpContextAttributes myRealAttributes16;EXTERN DSpContextReference theContext;//EXTERN DSpContextReference theContext16;EXTERN OSStatus theError;EXTERN void *inRefCon;

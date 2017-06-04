@@ -1,0 +1,1 @@
+#include "Mac Vars.h"#include <stdio.h>#include <stdlib.h>#include <math.h>#include <string.h>#include <time.h>#undef EXTERN#define EXTERN extern#include "Andys Defines.h"#include "Andys Externs.h"#include "3Deng.h"#undef EXTERN#define EXTERN#if GAME_DEBUG!=ON#define AF_randomize(X,Y)		af_randomize()#endif

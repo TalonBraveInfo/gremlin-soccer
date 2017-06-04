@@ -1,0 +1,43 @@
+EXTERN void checksum(void);
+EXTERN void make_mtable(int t1,int t2);
+EXTERN void process_flags(void);
+EXTERN void init_line_up(void);
+EXTERN short convert_control(char c);
+EXTERN short conv_conts_back(char c);
+EXTERN void init_rand(void);
+EXTERN void initialise_vars(void);
+EXTERN void init_user_controls(void);
+EXTERN void svgacpy2(unsigned char *buffpt,short x,short y,short w,short h);
+EXTERN void display_endscr(void);
+EXTERN void display_screen(void);
+EXTERN void load_new_tactics(void);
+EXTERN void init_match(void);
+EXTERN void init_player_stats(short p);
+EXTERN void process_subs(void);
+EXTERN void save_game(void);
+EXTERN void restore_game(void);
+EXTERN void variable_wind(void);
+EXTERN void do_logic(void);
+EXTERN void stop_mf_time(void);
+EXTERN void pause_game(void);
+EXTERN void process_keys(void);
+EXTERN void animate_players(void);
+//EXTERN void update_2d(void);
+EXTERN void reset_possession(void);
+EXTERN void accumulate_possession(void);
+EXTERN void process_crowd_noise(void);
+EXTERN char nothing_happening(void);
+EXTERN void watch_match_time(void);
+EXTERN void setup_alarm(void);
+EXTERN void init_wind(void);
+EXTERN void NetUserInit(void);
+EXTERN void TimerInit(void);
+EXTERN void reset_front(void);
+EXTERN int match(int argc, char **argv);
+EXTERN void ProcessOptUser( int opt_user);
+EXTERN void ProcessNetMessages( short *data);
+EXTERN void ProcessDeletePlayer( int player);
+
+#if GAME_DEBUG==ON
+EXTERN FILE *GameDebugFP;
+#endif

@@ -1,0 +1,1 @@
+EXTERN int init3d_rave(void);EXTERN void end3d_rave(void);EXTERN Boolean UseRaveEngine;

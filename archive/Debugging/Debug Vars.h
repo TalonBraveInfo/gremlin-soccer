@@ -1,0 +1,1 @@
+//#include "Mac Vars.h"#define EXTERN

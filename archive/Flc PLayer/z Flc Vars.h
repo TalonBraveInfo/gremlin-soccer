@@ -1,0 +1,1 @@
+#include "Mac Vars.h"#include <stdio.h>#include <stdlib.h>#define EXTERN

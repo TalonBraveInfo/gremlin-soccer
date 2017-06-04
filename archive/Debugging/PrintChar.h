@@ -1,0 +1,1 @@
+extern void Verbose(char *format,...);extern void DumpLong(long offset, unsigned long var);extern void DumpLong2(long offset, unsigned long var);extern void DumpTime(long offset);extern void PrintString(char *str);extern void PrintChar(short chr);extern void ReadTimerStart(void);extern void ReadTimerEnd(void);

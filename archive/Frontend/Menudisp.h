@@ -1,0 +1,14 @@
+EXTERN	int 	DisplaySTRING (char *text,int state);
+EXTERN	int 	FindLengthOfSTRING (char *text, char chr, int state);
+EXTERN	void 	SetupSpriteDATA (int SpriteNumber);
+EXTERN	void 	DisplaySTARstats (int value);
+EXTERN	void 	Display_Sprites(int menu_number);
+EXTERN	void	Animate_Buttons(int menu_number);
+EXTERN	void	Set_palette();
+EXTERN	void	Set_palette_to_black();
+EXTERN	void	Fade_up_palette();
+EXTERN	void	Dump_copy_list();
+EXTERN	void	Add_to_copy_list(short x,short y,short w,short h);
+EXTERN	void	Clear_copy_list();
+EXTERN	void	DisplayPROPORTION();
+EXTERN	void	Control_Sliders(int menu_number);

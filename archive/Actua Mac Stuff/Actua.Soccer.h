@@ -1,0 +1,1 @@
+EXTERN void main(void);EXTERN void restartProc(void);EXTERN void SetUpWindow(void);EXTERN void BeginGame(void);EXTERN void MacAttractMode(void);EXTERN void RefreshWTWindow(void);

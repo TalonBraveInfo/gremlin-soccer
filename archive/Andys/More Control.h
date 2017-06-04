@@ -1,0 +1,1 @@
+EXTERN short ProcessX( short x, short y);EXTERN short ProcessY( short x, short y);EXTERN void process_user_inputs(void);

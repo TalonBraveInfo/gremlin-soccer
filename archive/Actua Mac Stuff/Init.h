@@ -1,0 +1,1 @@
+// Init.hEXTERN void Initialize( short moreMasters, long MinimumSize);EXTERN void InitializeMenus( void);EXTERN void CheckEnvironment( void);EXTERN long AvailableMemory;

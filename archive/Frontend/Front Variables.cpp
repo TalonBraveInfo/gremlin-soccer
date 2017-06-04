@@ -1,0 +1,1 @@
+#include <NetSprocket.h>#define DONT_DECLARE#include "Frontend Vars.h"#include "Front Variables.h"#undef EXTERN#define EXTERN extern

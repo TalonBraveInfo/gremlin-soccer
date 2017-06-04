@@ -1,0 +1,1 @@
+EXTERN void restartProc(void);EXTERN void main(void);EXTERN int CheckSoundManager(void);EXTERN int CheckOperatingSystem(void);EXTERN void OpenMyWindow(void);

@@ -1,0 +1,1 @@
+EXTERN short 		GetAndProcessEvent(void);EXTERN EventRecord	gTheEvent;

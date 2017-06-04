@@ -1,0 +1,25 @@
+EXTERN void	Do_button_control(int menu_number);
+EXTERN void	Update_formation(int current_menu);
+EXTERN void	Update_environment(int current_menu);
+EXTERN void	Do_text_editing(int menu_number);
+EXTERN void	Animate_participating_flags(int	menu_number);
+EXTERN void	Do_participating_selection(int menu_number);
+EXTERN void	Do_choice_selection(int menu_number);
+EXTERN void	Do_edit_team_data(int menu_number);
+EXTERN void	Do_match_info_screen(int menu_number);
+EXTERN void	Do_squad_selection(int menu_number);
+EXTERN void	View_auto_selected_team(int menu_number);
+EXTERN void	Do_save_load_selection(int menu_number);
+EXTERN void	Do_control_selection(int menu_number);
+EXTERN void	Redefine_keyboard(int menu_number);
+EXTERN void	Calibrate_joystick(int menu_number);
+EXTERN void	View_player_statistics(int menu_number);
+EXTERN void	View_match_setup(int menu_number);
+EXTERN void	Do_net_player_selection(int menu_number);
+EXTERN void	Do_juggling_man(int menu_number);
+EXTERN void check_for_tga(void);
+EXTERN int	GetWinningLeagueTeam(void);
+EXTERN void	Do_number_input(int menu_number);
+EXTERN void	Do_text_input(int menu_number);
+
+EXTERN KeyMap keyMap;

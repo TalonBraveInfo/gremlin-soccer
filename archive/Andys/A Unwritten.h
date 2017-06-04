@@ -1,0 +1,1 @@
+EXTERN void Network_Play_Ready(void);EXTERN void Quit_Network_Play(void);

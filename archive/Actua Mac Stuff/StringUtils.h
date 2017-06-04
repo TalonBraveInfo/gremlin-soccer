@@ -1,0 +1,1 @@
+//EXTERN char  *jstrcpy(char *dest,char *src);//EXTERN char  *jstrcat(char *dest,char *src);EXTERN void	 c2p(char *cptr);
