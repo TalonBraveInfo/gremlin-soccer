@@ -45,8 +45,6 @@ typedef 		unsigned char BYTE;
 #define	EuroMouse					4
 #define	EuroLogictechPad			5
 
-#define	NO_OF_CONTROL_METHODS	6
-
 // [ Keyboard Input Data ]
 
 #define 	B_SPACE						0x08

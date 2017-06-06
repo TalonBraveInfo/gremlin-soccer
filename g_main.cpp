@@ -2,7 +2,7 @@
  * With modifications by Mark E Sowden
  */
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "mallocx.h"
 
@@ -44,6 +44,8 @@
 #define VERSION_MAJOR   0
 #define VERSION_MINOR   1
 
+#define GAME_TITLE  "VR Soccer"
+
 void InitializeGameVariables() { // todo, move these into their own class handler / whatever
     LogicState      = BLANK_SCREEN;
     Team            = England;
@@ -68,19 +70,35 @@ void InitializeGameVariables() { // todo, move these into their own class handle
 }
 
 void InitialiseAudio() {
-#ifdef IMPLEMENT_ME
     InitialiseTimer();
 
+#ifdef IMPLEMENT_ME
     if(InitialiseDIGI(22050, 0)) { // Initialise Digital Sound Drivers
         return (EXIT_FAILURE);
     }
 #endif
 }
 
+void InitialiseVideo() {
+    SDL_Window *window = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
+    if(!window) {
+        printf("Failed to create window!\n%s", SDL_GetError());
+        exit(-1);
+    }
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE);
+    if(!renderer) {
+        printf("Failed to create renderer!\n%s", SDL_GetError());
+        exit(-1);
+    }
+
+
+}
+
 int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    printf("\nACTUA SOCCER\n");
+    printf("\nACTUA SOCCER '96\n");
     printf("(C) 1997 Gremlin Interactive Ltd.\n");
     printf("With modifications by Mark E Sowden\n\n");
     printf("Version: %d.%d      " __DATE__ "\n\n", VERSION_MAJOR, VERSION_MINOR);
@@ -236,6 +254,7 @@ int main(int argc, char **argv) {
     reset_league_teams();
 
     InitialiseAudio();
+    InitialiseVideo();
 
     ftick = 0;
     tick = 0;
@@ -246,27 +265,11 @@ int main(int argc, char **argv) {
     AddTimer(TIMER_SPEED, nethandler, NetworkHandle);
     AddTimer(63, EUROinterupt, EuroHandle);
 
-    SetPaletteToBlack();
+    FrontendBackgroundDEFN.pseudo_start = EuroBackgroundBuffer;
+    FrontendPseudoDEFN.pseudo_start = EuroPseudoBuffer;
+    Set_640x480_VideoMode();
 
-    int new_menu = MENU_1;
-    while(new_menu != QUIT && new_menu != NO_MOUSE) {
-        if(EUROgameType == EURO_wireplay) {
-#ifdef IMPLEMENT_ME // todo, overhaul network logic
-            StartingEURO_96(EUROgameType);
-            Euro96initialise();
-            EUROuserSelection = 0;
-            Menu = PLAYER_SETUP;
-            EURO_Did_I_ChooseTeams = Yes;   // you made team choice.
-            Team_A = EUROteamA;             // Send your choice of teams.
-            Team_B = EUROteamB;             // Send your choice of teams.
-            SendTeamInfo();
-            TickPause();
-            TickPause();
-            TickPause();
-            EURO_NetSelectionMade = No; // player selection has not yet been made.
-#endif
-        }
-    }
+    SetPaletteToBlack();
 
     return 0;
 }

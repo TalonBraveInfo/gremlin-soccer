@@ -4,8 +4,6 @@
 #include <math.h>
 #include <time.h>
 
-#include "euro_def.h"
-
 #include "network.h"
 #include "defines.h"
 #ifdef IMPLEMENT_ME

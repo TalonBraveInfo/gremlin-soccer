@@ -37,6 +37,8 @@ enum {
 
 #define SPECIALK 128
 
+#define	NO_OF_CONTROL_METHODS	6
+
 #define    UP_KEY        0
 #define    DN_KEY        1
 #define    LF_KEY        2
