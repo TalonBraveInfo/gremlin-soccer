@@ -1,8 +1,7 @@
 
- > Original initialisation code is INCREDIBLY
-
+ > Original initialisation code is INCREDIBLY messy, game vars should be initialised somewhere else!
+ > The game compiles down as C++ but is written stylistically as C; I'll retain this in refactoring
  > Everything starts from test.cpp which contains the init loop etc etc
-
  > Config parser is missing, bummer but it's just an ini file so it's not a huge issue parsing it
-
  > Further config stuff is missing? Saved states etc?? Hrrmm I'm yet to see this anywhere...
+ > roth* and some other files were intended for other Gremlin games, Realms of the Haunting and Normality
