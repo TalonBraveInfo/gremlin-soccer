@@ -3,7 +3,7 @@
  */
 
 #include <stdio.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "eurodefs.h"
 #include "euro_fxd.h"
