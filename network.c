@@ -1577,7 +1577,11 @@ void pausehandler() {
 /*****************/
 
 void Initialise_Network() {
-#ifdef IMPLEMENT_ME
+#ifndef IMPLEMENT_ME
+    if(network_on) {
+
+    }
+#else
     int i;
 //	active_nodes=1;		// if no network 1 player.
     net_quit = FALSE;

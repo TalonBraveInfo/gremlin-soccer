@@ -7,7 +7,7 @@ extern	char				sub_version;
 extern	char				day;
 extern	char				month;
 extern	short				year;
-extern	char				EUROsymbol;
+extern	bool				EUROsymbol;
 extern	int				    EUROerror;
 extern	char				EUROverbose;
 extern	char				EUROfrontend;

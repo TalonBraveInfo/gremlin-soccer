@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdbool.h>
+
+#include <SDL2/SDL_net.h>
 
 #include "euro_def.h"
 
@@ -15,50 +18,37 @@ char EUROnetInitialise = FALSE;
 //********************************************************************************************************************************
 
 void InitEUROnet() {
-#ifdef IMPLEMENT_ME
-    if ( ( hmiNETNOWInitSystem(20)!=_NETNOW_NO_ERROR) )
-    {
-        EUROnetInitialise	= FALSE;
-        printf	("Network cannot be initialised.\n");
-        fflush(stdout);
+    if(SDLNet_Init() == -1) {
+        EUROnetInitialise = false;
+        printf("Network cannot be initialised.\n%s\n", SDLNet_GetError());
+        return;
     }
-    else
-    {
-        EUROnetInitialise	= TRUE;
-        printf	("Network initialised okay.\n");
-        fflush(stdout);
-    }
-#else
-    EUROnetInitialise = FALSE;
-    printf("Network cannot be initialised.\n");
-#endif
+
+    EUROnetInitialise = true;
+    printf("Network initialised okay.\n");
 }
 
 //********************************************************************************************************************************
 
 void UnInitEUROnet() {
-#ifdef IMPLEMENT_ME
-    if (EUROnetInitialise == Yes)
-        hmiNETNOWUnInitSystem();
-#endif
-    EUROnetInitialise = FALSE;
+    if(EUROnetInitialise == true) {
+        SDLNet_Quit();
+    }
+    EUROnetInitialise = false;
 }
 
 //********************************************************************************************************************************
 
 char CountNumberOfNETstarts() {
-#ifdef IMPLEMENT_ME
     char Starts = 0;
-    char i;
-
-    for (i = 0; i < network_on; i++) {
-        if (NetTeams[i] >= 2)
+    for(char i = 0; i < network_on; i++) {
+#ifdef IMPLEMENT_ME
+        if(NetTeams[i] >= 2) {
             Starts++;
-    }
-    return (char) (network_on - Starts);
-#else
-    return 0;
+        }
 #endif
+    }
+    return (char)(network_on - Starts);
 }
 
 //********************************************************************************************************************************

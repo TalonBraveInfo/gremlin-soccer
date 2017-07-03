@@ -21,7 +21,7 @@ char sub_verion;
 char day;
 char month;
 short year;
-char EUROsymbol;
+bool EUROsymbol;
 int EUROerror = 0;
 char EUROverbose = 0;
 char EUROfrontend = 0;

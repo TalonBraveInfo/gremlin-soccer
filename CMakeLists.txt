@@ -35,8 +35,10 @@ file(GLOB ACTUASOCCER_SOURCE_FILES
         mallocx.c
         unmangle.c
 
+        audio/*.*
+
         )
 
 add_executable(ActuaSoccer ${ACTUASOCCER_SOURCE_FILES})
 
-target_link_libraries(ActuaSoccer SDL2)
+target_link_libraries(ActuaSoccer SDL2 SDL2_net)

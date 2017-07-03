@@ -72,6 +72,8 @@ void InitializeGameVariables() { // todo, move these into their own class handle
 void InitialiseAudio() {
     InitialiseTimer();
 
+
+
 #ifdef IMPLEMENT_ME
     if(InitialiseDIGI(22050, 0)) { // Initialise Digital Sound Drivers
         return (EXIT_FAILURE);
@@ -123,7 +125,7 @@ int main(int argc, char **argv) {
     EUROmaxPlayers = SetupControlMethods();
 
     InitEUROnet();
-    if (EUROnetInitialise == No && EUROgameType == EURO_network_game) {
+    if (!EUROnetInitialise && EUROgameType == EURO_network_game) {
         EUROgameType = EURO_friendly;
     }
 
@@ -134,17 +136,17 @@ int main(int argc, char **argv) {
     TextStringMemHandle = AllocateTextStringMemory();
     printf("%d Bytes allocated for script file text.\n", TEXT_STRING_BUFFER_LEN);
 
-    if (EUROsymbol == TRUE) {
+    if (EUROsymbol) {
         fp2 = fopen("euro_sym.h", "wb");
         if (fp2 == NULL) {
-            EUROsymbol = FALSE;
+            EUROsymbol = false;
             printf("Error trying to create symbol table.\n");
         }
     }
 
     process_script_file(EuroSCRIPTfile);
 
-    if (EUROsymbol == TRUE) {
+    if (EUROsymbol) {
         fclose(fp2);
         printf("Symbol table created.\n");
         DeAllocateMemory(TextStringMemHandle);

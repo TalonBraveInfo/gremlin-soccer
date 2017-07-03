@@ -741,7 +741,7 @@ void Getvariable(char *buf) {
             }
         }
 
-        if (buf[inst] == '' && EUROsymbol == 1) {
+        if (buf[inst] == '' && EUROsymbol == true) {
             variable = DEFINITION_ID;
             inst += 2;
         }

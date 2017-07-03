@@ -286,7 +286,7 @@ int main(int argc, char **argv) {
     day = 15;
     month = 12;
     year = 1995;
-    EUROsymbol = 0;
+    EUROsymbol = false;
     EUROfrontend = 1;
 
     printf("\n\n\n\nEURO '96\n");
@@ -384,10 +384,10 @@ int main(int argc, char **argv) {
     // ------------------------------------
 
 
-    if (EUROsymbol == 1) {
+    if (EUROsymbol == true) {
         fp2 = fopen("euro_sym.h", "wb");
         if (fp2 == NULL) {
-            EUROsymbol = 0;
+            EUROsymbol = false;
             printf("Error trying to create symbol table.\n");
             fflush(stdout);
         }
@@ -395,7 +395,7 @@ int main(int argc, char **argv) {
 
     process_script_file(EuroSCRIPTfile);        // Reads script file and compiles relevent data for game.
 
-    if (EUROsymbol == 1) {
+    if (EUROsymbol == true) {
         fclose(fp2);
         printf("Symbol table created.\n");
         fflush(stdout);
