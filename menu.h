@@ -5,6 +5,5 @@ extern	int 		GetBUTTONnumber(int button_type, int button_index, int button_flags
 extern	menu 		menu_data[];
 extern	label		menu_labels[];
 extern	void		Initialise_rolling_demo();
-extern	void		SetToTEXTmode();
 extern	void		FadeSCREEN();
 extern const char * GetText(int text_number);

@@ -2,7 +2,7 @@
  * With modifications by Mark E Sowden
  */
 
-#include <SDL2/SDL.h>
+#include "g_shared.h"
 
 #include "mallocx.h"
 
@@ -45,7 +45,7 @@
 #define VERSION_MAJOR   0
 #define VERSION_MINOR   1
 
-#define GAME_TITLE  "VR Soccer"
+#define GAME_TITLE  "Gremlin Soccer"
 
 void InitializeGameVariables() { // todo, move these into their own class handler / whatever
     LogicState      = BLANK_SCREEN;
@@ -83,23 +83,23 @@ void InitialiseAudio() {
 void InitialiseVideo() {
     SDL_Window *window = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
     if(!window) {
-        printf("Failed to create window!\n%s", SDL_GetError());
+        DisplayError("Failed to creatue window!");
         exit(-1);
     }
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE);
     if(!renderer) {
-        printf("Failed to create renderer!\n%s", SDL_GetError());
+        DisplayError("Failed to create renderer!");
         exit(-1);
     }
 
-
+    SDL_ShowCursor(false);
 }
 
 int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    printf("\nACTUA SOCCER '96\n");
+    printf("\n" GAME_TITLE "\n");
     printf("(C) 1997 Gremlin Interactive Ltd.\n");
     printf("With modifications by Mark E Sowden\n\n");
     printf("Version: %d.%d      " __DATE__ "\n\n", VERSION_MAJOR, VERSION_MINOR);
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
     ProcessCommandLine(argc, argv);
 
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        printf("Failed to initialize SDL!\n%s", SDL_GetError());
+        DisplayError("Failed to initialize SDL!");
         return -1;
     }
 
