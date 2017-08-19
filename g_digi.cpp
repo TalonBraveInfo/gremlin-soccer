@@ -9,7 +9,7 @@
 #include "config.h"
 #include "defines.h"
 
-bool SoundCard;   // SOS ID of Sound Card
+bool SoundCard = false; // SOS ID of Sound Card
 
 //************************************************************************************************
 //
@@ -20,12 +20,10 @@ bool SoundCard;   // SOS ID of Sound Card
 //
 //************************************************************************************************
 int InitialiseDIGI(int freq,int flags) {
-    SoundCard = FALSE;
-
     if(Mix_OpenAudio(freq, AUDIO_S16, 2, 1024) == 0) {
         Mix_AllocateChannels(32);
 
-        SoundCard = TRUE;
+        SoundCard = true;
         return EXIT_SUCCESS;
     }
 
@@ -41,6 +39,8 @@ int UnInitialiseDIGI(void) {
     if(SoundCard) {
         Mix_HaltChannel(-1);
         Mix_CloseAudio();
+
+        SoundCard = false;
     }
     return(EXIT_SUCCESS);
 }
