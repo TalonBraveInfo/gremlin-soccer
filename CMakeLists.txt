@@ -18,8 +18,7 @@ file(GLOB GREMLINSOCCER_SOURCE_FILES
         *.equ
 
         # New
-        g_main.cpp
-        g_config.cpp
+        g_*.cpp
 
         # Original
         euro_*.cpp
@@ -41,4 +40,4 @@ file(GLOB GREMLINSOCCER_SOURCE_FILES
 
 add_executable(gremlin-soccer ${GREMLINSOCCER_SOURCE_FILES})
 
-target_link_libraries(gremlin-soccer SDL2 SDL2_net)
+target_link_libraries(gremlin-soccer SDL2 SDL2_net SDL2_mixer)

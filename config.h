@@ -70,14 +70,14 @@ extern unsigned short int Installation;
 extern unsigned short int Language;
 
 // Sound Card Configuration
-extern unsigned short int SoundCard;                // SOS ID of Sound Card
-extern unsigned short int SoundPort;                // Port Address
-extern unsigned short int SoundIRQ;                    // Interrupt
-extern unsigned short int SoundDMA;                    // DMA Channel
-extern unsigned short int SoundFrequency;            // Base Frequency for samples
-extern unsigned short int SoundIntRate;            // Digital timer interrupt rate
-extern unsigned short int SoundHardDiskBuffer;    // Hard Disk Buffer Size
-extern unsigned short int SoundDMABuffer;            // Digital DMA Buffer Size
+extern bool SoundCard;                          // SOS ID of Sound Card
+extern unsigned short int SoundPort;            // Port Address
+extern unsigned short int SoundIRQ;             // Interrupt
+extern unsigned short int SoundDMA;             // DMA Channel
+extern unsigned short int SoundFrequency;       // Base Frequency for samples
+extern unsigned short int SoundIntRate;         // Digital timer interrupt rate
+extern unsigned short int SoundHardDiskBuffer;  // Hard Disk Buffer Size
+extern unsigned short int SoundDMABuffer;       // Digital DMA Buffer Size
 
 // Music Card Configuration
 extern unsigned short int MusicCard;        // SOS ID of Music Card

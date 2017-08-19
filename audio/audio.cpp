@@ -7,6 +7,7 @@
 #include <config.h>
 #include <3deng.h>
 #include <gamedata.h>
+#include <digi.h>
 
 #include "audio.h"
 
@@ -271,15 +272,13 @@ unsigned int InitMatchAudio(unsigned int seed) {
 //
 //************************************************************************************************
 void UpdateVolumeLevels(void) {
-    audio_state.CrowdVolume = match_info.crowd;
-    audio_state.PitchVolume = match_info.pitch;
-    audio_state.CommentaryVolume = match_info.commentary;
-    audio_state.MusicVolume = match_info.music;
-    audio_state.MasterVolume = match_info.master;
+    audio_state.CrowdVolume         = match_info.crowd;
+    audio_state.PitchVolume         = match_info.pitch;
+    audio_state.CommentaryVolume    = match_info.commentary;
+    audio_state.MusicVolume         = match_info.music;
+    audio_state.MasterVolume        = match_info.master;
 
-#ifdef IMPLEMENT_ME
-    SetDIGIVolume(MasterVolume, MusicVolume);
-#endif
+    SetDIGIVolume(audio_state.MasterVolume, audio_state.MusicVolume);
 }
 
 //################################################################################################

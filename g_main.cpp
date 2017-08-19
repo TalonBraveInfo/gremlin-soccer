@@ -32,6 +32,7 @@
 #include "timer.h"
 #include "menu.h"
 #include "externs.h"
+#include "digi.h"
 
 //**********************************************************************************************************************
 
@@ -70,25 +71,15 @@ void InitializeGameVariables() { // todo, move these into their own class handle
     EUROplyrSetup       = 0;
 }
 
-void InitialiseAudio() {
-    InitialiseTimer();
-
-#ifdef IMPLEMENT_ME
-    if(InitialiseDIGI(22050, 0)) { // Initialise Digital Sound Drivers
-        return (EXIT_FAILURE);
-    }
-#endif
-}
-
 void InitialiseVideo() {
-    SDL_Window *window = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
-    if(!window) {
+    g_state.window = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
+    if(!g_state.window) {
         DisplayError("Failed to creatue window!");
         exit(-1);
     }
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_TARGETTEXTURE);
-    if(!renderer) {
+    g_state.renderer = SDL_CreateRenderer(g_state.window, -1, SDL_RENDERER_TARGETTEXTURE);
+    if(!g_state.renderer) {
         DisplayError("Failed to create renderer!");
         exit(-1);
     }
@@ -98,6 +89,8 @@ void InitialiseVideo() {
 
 int main(int argc, char **argv) {
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    memset(&g_state, 0, sizeof(g_state));
 
     printf("\n" GAME_TITLE "\n");
     printf("(C) 1997 Gremlin Interactive Ltd.\n");
@@ -110,7 +103,7 @@ int main(int argc, char **argv) {
 
     ProcessCommandLine(argc, argv);
 
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+    if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         DisplayError("Failed to initialize SDL!");
         return -1;
     }
@@ -177,7 +170,6 @@ int main(int argc, char **argv) {
 
     memset(&match_info, 0, sizeof(match_data));
     match_info.menu_res                 = HI;
-    match_info.tga_enable               = OFF;
     match_info.language                 = (char) English;
     match_info.referee                  = 16 + 16;
     match_info.CompetitionType          = FRIENDLY;
@@ -202,19 +194,19 @@ int main(int argc, char **argv) {
 #if 0
     batch_info.rolling_demo             = ROLLING_DEMO;
 #else
-    batch_info.rolling_demo             = OFF;
+    batch_info.rolling_demo             = false;
 #endif
     batch_info.GDVres                   = HI;
     batch_info.match_number             = -1;
     batch_info.cup_match_number         = -1;
     batch_info.number_of_cup_teams      = 32;
 
-    batch_info.keys_used[UP_RED]        = 0x1e; // A
-    batch_info.keys_used[DN_RED]        = 0x2c; // Z
-    batch_info.keys_used[LF_RED]        = 0x33; // <
-    batch_info.keys_used[RT_RED]        = 0x34; // >
-    batch_info.keys_used[F1_RED]        = 0x10; // Q
-    batch_info.keys_used[F2_RED]        = 0x35; // /
+    batch_info.keys_used[UP_RED]        = 0x1e;     // A
+    batch_info.keys_used[DN_RED]        = 0x2c;     // Z
+    batch_info.keys_used[LF_RED]        = 0x33;     // <
+    batch_info.keys_used[RT_RED]        = 0x34;     // >
+    batch_info.keys_used[F1_RED]        = 0x10;     // Q
+    batch_info.keys_used[F2_RED]        = 0x35;     // /
     batch_info.keys_used[UP_RED + 6]    = -0x48;    // Arrow Up
     batch_info.keys_used[DN_RED + 6]    = -0x50;    // Arrow Dn
     batch_info.keys_used[LF_RED + 6]    = -0x4b;    // Arrow Lf
@@ -244,7 +236,6 @@ int main(int argc, char **argv) {
     setup.detail.players    = HI;
     setup.detail.pitch      = MED;
     setup.start_res         = LO;
-    setup.screen_size       = 0;
     setup.stadium           = TRUE;
     setup.detail.sky        = detail_defaults[sys_speed].sky;
     setup.detail.stadia     = detail_defaults[sys_speed].stadia;
@@ -253,12 +244,13 @@ int main(int argc, char **argv) {
     setup.detail.lines      = detail_defaults[sys_speed].lines;
     setup.detail.shadows    = detail_defaults[sys_speed].shadows;
     setup.screen_size       = screen_defaults[sys_speed];
-    setup.vidi_type         = NULL;
-    setup.start_res         = NULL;
 
     reset_league_teams();
 
-    InitialiseAudio();
+    if(InitialiseDIGI(22050, 0)) { // Initialise Digital Sound Drivers
+        return (EXIT_FAILURE);
+    }
+
     InitialiseVideo();
 
     ftick = 0;
