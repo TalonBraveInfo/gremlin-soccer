@@ -8,8 +8,6 @@
 #include "cgdv.h"
 #include "defines.h"
 
-#define    MAX_USERS    20
-
 extern int network_on;
 extern volatile int NetTeams[MAX_USERS], Players[MAX_USERS];
 

@@ -31,6 +31,7 @@
 #include "intronet.h"
 #include "timer.h"
 #include "menu.h"
+#include "externs.h"
 
 //**********************************************************************************************************************
 
@@ -71,8 +72,6 @@ void InitializeGameVariables() { // todo, move these into their own class handle
 
 void InitialiseAudio() {
     InitialiseTimer();
-
-
 
 #ifdef IMPLEMENT_ME
     if(InitialiseDIGI(22050, 0)) { // Initialise Digital Sound Drivers
@@ -200,7 +199,11 @@ int main(int argc, char **argv) {
     match_info.freekicks_toggle         = TRUE;
 
     memset(&batch_info, 0, sizeof(batch_data));
+#if 0
     batch_info.rolling_demo             = ROLLING_DEMO;
+#else
+    batch_info.rolling_demo             = OFF;
+#endif
     batch_info.GDVres                   = HI;
     batch_info.match_number             = -1;
     batch_info.cup_match_number         = -1;
@@ -219,7 +222,7 @@ int main(int argc, char **argv) {
     batch_info.keys_used[F1_RED + 6]    = 0x52;     // 0(num)
     batch_info.keys_used[F2_RED + 6]    = 0x53;     // .(num)
 
-    if (batch_info.rolling_demo == Off) {
+    if(!batch_info.rolling_demo) {
         match_info.GameType = SIMULATION;
         match_info.GameType_toggle = SIMULATION;
     } else {
@@ -270,8 +273,11 @@ int main(int argc, char **argv) {
     FrontendBackgroundDEFN.pseudo_start = EuroBackgroundBuffer;
     FrontendPseudoDEFN.pseudo_start = EuroPseudoBuffer;
     Set_640x480_VideoMode();
-
     SetPaletteToBlack();
+
+    while(true) {
+
+    }
 
     return 0;
 }

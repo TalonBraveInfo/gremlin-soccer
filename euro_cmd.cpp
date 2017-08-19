@@ -28,14 +28,14 @@ void ProcessCommandLine(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         std::locale p;
         std::string command = argv[i];
-        for(std::string::size_type j = 0; j < command.length(); ++j) {
-            command[j] = std::tolower(command[j], p);
+        for (char &j : command) {
+            j = std::tolower(j, p);
         }
 
         if (i < (argc - 1)) {
             std::string setting = argv[i + 1];
-            for(std::string::size_type j = 0; j < setting.length(); ++j) {
-                setting[j] = std::tolower(setting[j], p);
+            for (char &j : setting) {
+                j = std::tolower(j, p);
             }
 
             if (setting == "bul")

@@ -37,7 +37,7 @@ signed int ReadLine(FILE *fp, char *buf) {
 
 void ReadDataOffsetFile(const char *filename) {
     FILE *fp1 = fopen(filename, "rb");
-    if (fp1 != NULL) {
+    if (fp1 != nullptr) {
         fread(Offset_table, sizeof(BYTE), 512 * 4, fp1);
         fclose(fp1);
         printf("Data Offset file loaded.\n");
@@ -50,7 +50,7 @@ void ReadDataOffsetFile(const char *filename) {
 
 void ReadData(int file, const char *filename, BYTE *buffer) {
     FILE *fd = fopen(filename, "rb");
-    if (fd != NULL) {
+    if (fd != nullptr) {
         long seek_pos = Offset_table[file / 8].offset;
         size_t file_size = Offset_table[file / 8].size;
         fseek(fd, seek_pos, SEEK_SET);
@@ -87,7 +87,7 @@ void LoadTactics(int tactic, const char *filename, int *buffer) {
 
 void SaveGameData(char *filename) {
     FILE *fp = fopen(filename, "wb");
-    if (fp != NULL) {
+    if (fp != nullptr) {
         fwrite(SquadInfo, sizeof(char), 16 * 20, fp);
         fwrite(FormationInfo, sizeof(char), 16, fp);
         fwrite(GroupDrawInfo, sizeof(char), 16, fp);
@@ -104,7 +104,7 @@ void SaveGameData(char *filename) {
 
 void LoadGameData(char *filename) {
     FILE *fp = fopen(filename, "rb");
-    if (fp != NULL) {
+    if (fp != nullptr) {
         fread(SquadInfo, sizeof(char), 16 * 20, fp);
         fread(FormationInfo, sizeof(char), 16, fp);
         fread(GroupDrawInfo, sizeof(char), 16, fp);

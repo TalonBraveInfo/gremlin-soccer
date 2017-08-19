@@ -28,10 +28,6 @@
 
 #include "playdam.h"                            // Structure Definitions for Digital Video
 #include "playcall.h"                        // Call Defininitions for Digital Video
-#include "animlink.h"
-#include "calldef.h"
-#include "memstruc.h"
-#include "rothlink.h"
 #include "mallocx.h"
 #include "control.h"
 

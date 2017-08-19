@@ -155,7 +155,7 @@ extern int swerve, spin_cnt, spin_ball, prediction;
 extern float ball_horz_ang,ball_vert_ang;
 extern float ball_diam;
 
-extern short keeper_down=FALSE;
+extern short keeper_down;
 extern int keeper_will_save;
 extern char keeper_on_grnd;
 extern float keeper_contact;
@@ -246,7 +246,7 @@ extern int replay_cnt;
 extern int pitch_sprs;
 
 // Sprite Stuff...
-
+#define MAX_3D_SPRS 100
 extern float spr_coord_tab[MAX_3D_SPRS*3+1];
 extern short spr_ref_tab[MAX_3D_SPRS];
 
@@ -770,10 +770,10 @@ extern "C" void Network_Play_Ready();
 extern "C" void Quit_Network_Play();
 extern "C" void End_Network_Game();
 
-extern "C" void __far nethandler(void);
+extern "C" void nethandler(void);
 extern "C" unsigned int NetworkHandle;
 extern "C" short wConsoleNode;
-extern "C" volatile int network_on;
+extern "C" int network_on;
 extern "C" volatile int count;
 extern "C" volatile int tick;
 extern "C" volatile int ftick;

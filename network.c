@@ -1830,7 +1830,3 @@ void NetTest() {
 
     // ...whetever front end stuff comes after...
 }
-
-void crap() {
-    printf(" net %d  %d \n", *&users[0].inp_x, (int) &users[0].inp_x);
-}
