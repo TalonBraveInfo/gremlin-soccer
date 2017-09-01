@@ -20,6 +20,13 @@
 #include "euro_int.h"
 #include "euro_grf.h"
 #include "euro_gen.h"
+#include "euro_sqd.h"
+#include "euro_sel.h"
+#include "euro_mod.h"
+#include "euro_mat.h"
+#include "euro_fix.h"
+#include "euro_inf.h"
+#include "euro_sym.h"
 
 #include "euro.equ"
 
@@ -74,14 +81,8 @@ void InitializeGameVariables() { // todo, move these into their own class handle
 void InitialiseVideo() {
     g_state.window = SDL_CreateWindow(GAME_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
     if(!g_state.window) {
-        DisplayError("Failed to creatue window!");
-        exit(-1);
-    }
-
-    g_state.renderer = SDL_CreateRenderer(g_state.window, -1, SDL_RENDERER_TARGETTEXTURE);
-    if(!g_state.renderer) {
-        DisplayError("Failed to create renderer!");
-        exit(-1);
+        DisplayError("Failed to creatue window: %s", SDL_GetError());
+        exit(EXIT_FAILURE);
     }
 
     SDL_ShowCursor(false);
@@ -104,7 +105,7 @@ int main(int argc, char **argv) {
     ProcessCommandLine(argc, argv);
 
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        DisplayError("Failed to initialize SDL!");
+        DisplayError("Failed to initialize SDL: %s", SDL_GetError());
         return -1;
     }
 
@@ -142,7 +143,7 @@ int main(int argc, char **argv) {
         fclose(fp2);
         printf("Symbol table created.\n");
         DeAllocateMemory(TextStringMemHandle);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     if (EUROgameType == EURO_wireplay) {
@@ -253,10 +254,11 @@ int main(int argc, char **argv) {
 
     InitialiseVideo();
 
-    ftick = 0;
-    tick = 0;
-    count = 0;
-    game_speed = REAL_SPEED;
+    ftick       = 0;
+    tick        = 0;
+    count       = 0;
+    game_speed  = REAL_SPEED;
+
     readptr = writeptr = 0;
 
     AddTimer(TIMER_SPEED, nethandler, NetworkHandle);
@@ -267,9 +269,90 @@ int main(int argc, char **argv) {
     Set_640x480_VideoMode();
     SetPaletteToBlack();
 
+    // todo, the below is prototyping code to get everything working...
+
+    init3d();
+
+    if(!(g_state.surface = SDL_CreateRGBSurfaceFrom(
+            FrontendBackgroundDEFN.pseudo_start, 640, 480, 8,
+            FrontendBackgroundDEFN.pseudo_width,
+            0, 0, 0, 0)
+    )) {
+        DisplayError("Failed to create surface: %s", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    SDL_Color conv_color[256];
+    extern unsigned char pal[768];
+    for(unsigned int i=0; i<256; i++) {
+#if 0
+        conv_color[i].r     = pal[i * 3];
+        conv_color[i].g     = pal[i * 3 + 1];
+        conv_color[i].b     = pal[i * 3 + 2];
+#else // debug palette
+        unsigned int c = 65000 * i;
+
+        conv_color[i].r = c & 0xFF;
+        conv_color[i].g = (c & 0xFF00)   >> 8;
+        conv_color[i].b = (c & 0xFF0000) >> 16;
+#endif
+    }
+
+    SDL_Palette *conv_pal = SDL_AllocPalette(256);
+    SDL_SetPaletteColors(conv_pal, conv_color, 0, 256);
+    SDL_SetSurfacePalette(g_state.surface, conv_pal);
+
+    SDL_Surface *window_surface = SDL_GetWindowSurface(g_state.window);
+
+    double time     = 0;
+    double d_time   = 1 / 60;
+
     while(true) {
 
+        // todo, example loop is below and will need replacing...
+
+        memset(FrontendBackgroundDEFN.pseudo_start, 0, 640 * 480);
+
+        ClearDumpList();
+
+        DisplayString(237 - (PixelLengthOfString(GetTEXT(VRUS_LBLE), LARGE_FONT)) / 2,
+                      414, "Hello World!!",
+                      MEDIUM_FONT, 22, NO_BOX,
+                      &FrontendBackgroundDEFN, &FrontendTextureDEFN);
+
+        DrawIMAGE(&FrontendBackgroundDEFN, &FrontendTextureDEFN, MOUSEimages + NoButton,
+                  10, 10, NO_BOX, spritecopy);
+
+        DrawIMAGE(&FrontendBackgroundDEFN, &FrontendTextureDEFN,
+                  SMLL_GOTH + EUROteamA, 192, 240, NO_BOX, spritecopy);
+
+        DrawIMAGE(&FrontendBackgroundDEFN, &FrontendTextureDEFN,
+                  PSBX_PANL, 278, 232, NO_BOX, spritecopy);
+
+        /* Palette test */
+        for(int i = 0; i < 256; ++i)
+        {
+            for(int rc = 0, r = 50 + (i / 64) * 10; rc < 10; ++rc, ++r)
+            {
+                memset(FrontendBackgroundDEFN.pseudo_start + (r * 640) + ((i % 64) * 10), i, 10);
+            }
+        }
+
+        SDL_BlitSurface(g_state.surface, NULL, window_surface, NULL);
+
+        SDL_UpdateWindowSurface(g_state.window);
+
+        // todo, temporary just to stop CPU from being hammered!
+        SDL_Delay(16);
     }
+
+    if(EUROverbose != 0) {
+        printf("\n  DEALLOCATING MEMORY BEFORE EXITING TO DOS.\n\n");
+    }
+
+    DeAllocateTexturePages();
+    DeAllocateDisplayBuffers();
+    DeAllocateMemory(TextStringMemHandle);  // DeAllocates memory used previously for text strings.
 
     return 0;
 }

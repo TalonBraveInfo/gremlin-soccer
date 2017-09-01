@@ -23,7 +23,6 @@
 #include "euro_usr.h"
 #include "euro_inf.h"
 #include "euro_gdv.h"
-#include "euro_win.h"
 #include "euro_net.h"
 #include "euro_cmd.h"
 #include "euro_rnd.h"

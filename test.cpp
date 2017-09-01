@@ -270,9 +270,7 @@ char testfile[128];
 //�                                                                                                                              �
 //�  Euro '96 addition.                                                                                                          �
 //�												                                 �
-//������������������������������������������������������������������������������������������������������������������������������ͼ 
-
-extern int testVESA;
+//������������������������������������������������������������������������������������������������������������������������������ͼ
 
 extern int VESAmode(int *);
 
@@ -1110,7 +1108,6 @@ int InsertKey(int SourceKEY) {
 //			
 //	       	if (GDVavailable!=NULL)
 //			{
-//			testVESA		=	1;	
 //			VIDEOstatus 		=	VESAmode( &GDVvidmode[0] );
 //			}
 //
@@ -1119,7 +1116,6 @@ int InsertKey(int SourceKEY) {
 //
 //	// setup the video mode, mode 101 (640x480).
 //
-//		testVESA		=	1;	
 //		VIDEOstatus 		=	VESAmode( &MENUvidmode[0] );
 //										
 //    		if (VIDEOstatus == -1)

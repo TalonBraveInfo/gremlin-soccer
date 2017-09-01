@@ -39,7 +39,6 @@ extern	char				DOBmonth[];
 extern	char				DOByear[];
 extern	char				NamePREFIXtbl[16*20];
 
-extern	offset_defn		Offset_table[];
 extern	texture_info 	FrontendTextureDEFN;
 extern	pseudo_info 	FrontendPseudoDEFN;
 extern	pseudo_info 	FrontendBackgroundDEFN;

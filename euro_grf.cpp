@@ -16,8 +16,6 @@
 #include "3deng.h"
 //#include "video.h"
 
-extern int testVESA;
-
 extern int VESAmode(int *);
 
 extern void svgacpy(char unsigned *, short, short, short, short, short);
@@ -234,7 +232,7 @@ void CopyDumpListToScreen() {
 
 //********************************************************************************************************************************
 
-void DisplayString(int xpos, int ypos, char *string, int font, int colour, signed char box, pseudo_info *pseudo,
+void DisplayString(int xpos, int ypos, const char *string, int font, int colour, signed char box, pseudo_info *pseudo,
                    texture_info *texture) {
     int c;
     svalue = colour;
@@ -538,7 +536,6 @@ short ControlSlider(slider_info *slider, short xposn, short yposn, short buttons
 void Set_640x480_VideoMode() {
     // set the video mode to mode 101 (640x480).
 #ifdef IMPLEMENT_ME
-    testVESA = 0;
     EuroVideoStatus = VESAmode(&EUROvideoMode[0]);
 #endif
 }
@@ -548,7 +545,6 @@ void Set_640x480_VideoMode() {
 void Test_640x480_VideoMode() {
     // tests for video mode 101 (640x480).
 #ifdef IMPLEMENT_ME
-    testVESA = 1;
     EuroVideoStatus = VESAmode(&EUROvideoMode[0]);
     if (EuroVideoStatus == -1)
         printf("Video mode unavailable.\n");

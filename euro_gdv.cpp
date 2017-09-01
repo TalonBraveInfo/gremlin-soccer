@@ -64,7 +64,6 @@
 #define DEFAULT_DELAYEXIT    25
 
 extern "C" volatile int count;
-extern int testVESA;
 
 extern int VESAmode(int *);
 

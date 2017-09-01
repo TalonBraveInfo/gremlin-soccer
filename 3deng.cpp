@@ -5,6 +5,8 @@
 
 // By Laurent Noel
 
+#include <unistd.h>
+
 #include "defs.h"
 
 /********************* HEADER FILES *********************/
@@ -47,7 +49,6 @@
 #include "euro_usr.h"
 #include "euro_inf.h"
 #include "euro_gdv.h"
-#include "euro_win.h"
 //#include "euro_net.h"
 #include "euro_cmd.h"
 #include "euro_rnd.h"
@@ -124,9 +125,7 @@ void dumpvidi1(scrpt dispx, scrpt dispy);
 void dumpnull(scrpt dispx, scrpt dispy);
 
 // Miscellaneous
-extern int w95;                // Are we in Windows 95 (AAAARRRRRGGGGHHHHH!!!!)
 extern float log_factor;    // No of logic frames/update
-extern int testVESA;
 extern char match_half;
 extern char match_mode;
 
@@ -613,6 +612,29 @@ obj stad1, stad2, stad3, stad4;
 datapt stad1_p[MAX_STAD_PTS * 3], stad2_p[MAX_STAD_PTS * 3], stad3_p[MAX_STAD_PTS * 3], stad4_p[MAX_STAD_PTS * 3];
 word stad1_f[MAX_STAD_FACES * 6], stad2_f[MAX_STAD_FACES * 6], stad3_f[MAX_STAD_FACES * 6], stad4_f[MAX_STAD_FACES * 6];
 float st_w, st_l, st_h;
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+ptlist goal1a_p;
+ptlist goal2a_p;
+ptlist goal1ax_p;
+ptlist goal2ax_p;
+ptlist goal3a_p;
+
+ptlist goal1b_p;
+ptlist goal2b_p;
+ptlist goal3b_p;
+ptlist goal1bx_p;
+ptlist goal2bx_p;
+ptlist goal3bx_p;
+
+extern ptlist goal1c_p;
+extern ptlist goal2c_p;
+extern ptlist goal3c_p;
+extern ptlist goal1cx_p;
+extern ptlist goal2cx_p;
+extern ptlist goal3cx_p;
 
 
 /********************* FUNCTION CODE ********************/
@@ -3200,7 +3222,6 @@ void switchmode() {
     short i;
     if (scrmode3DB < 0) {
         if (scrmode == 0x13) {
-            testVESA = 0;
             scrmode = VESAmode(&modelist[i = 0]);
             while (scrmode != modelist[i] && ++i != VESAMODES);
             if (i != VESAMODES)
@@ -3336,16 +3357,19 @@ int writebin(char *BinFile, BYTE *fPtr, int fLen) {
 }
 
 
-BYTE *readbin(char *BinFile, BYTE *fPtr, dword *fLen) {
-#ifdef IMPLEMENT_ME
+BYTE *readbin(const char *BinFile, BYTE *fPtr, dword *fLen) {
     int fHandle, fCount;
     short fDone, fTry;
     BYTE *fRes = fPtr;
 
-    if ((fHandle = open((char *) BinFile, O_RDONLY | O_BINARY)) != -1) {
-        *fLen = filelength(fHandle);
+    if ((fHandle = open((char *) BinFile, O_RDONLY)) != -1) {
         if (fPtr != NULL || (fPtr = (BYTE *) malloc(*fLen)) != NULL) {
             fCount = fDone = fTry = 0;
+            fDone = read(fHandle, fPtr + fCount, 3000);
+            if(fDone == -1) {
+                return nullptr;
+            }
+            /*
             while (fCount != *fLen && fDone == fTry) {
                 fTry = min(*fLen - fCount, 32766);
                 fDone = read(fHandle, fPtr + fCount, fTry);
@@ -3355,34 +3379,31 @@ BYTE *readbin(char *BinFile, BYTE *fPtr, dword *fLen) {
                 if (fRes == NULL)
                     free(fPtr);
                 fPtr = NULL;
-            }
+            }*/
         }
         close(fHandle);
     } else
         fPtr = NULL;
     return (fPtr);
-#endif
 }
 
 BYTE *readrawfile(const char *filename, BYTE *address) {
-#ifdef IMPLEMENT_ME
     BYTE *ptr;
     dword len;
     if ((ptr = readbin(filename, address, &len)) == NULL)
         printf("Error loading file %s\n", filename);
     return (ptr);
-#endif
 }
 
 #if 0
 char datafile[] = "actrend.dat";
 char dataoffs[] = "actrend.off";
 #else
-char datafile[] = "eurorend.dat";
-char dataoffs[] = "eurorend.off";
+char datafile[] = "EUROREND.DAT";
+char dataoffs[] = "EUROREND.OFF";
 #endif
-char fapfile[] = "fap.dat";
-char fapoffs[] = "fap.off";
+char fapfile[] = "FAP.DAT";
+char fapoffs[] = "FAP.OFF";
 
 struct {
     int offset, size;
@@ -4718,14 +4739,14 @@ void GOAL_SCORED(int team, int scorer, int time) {
 
     while (goal_slot == -1) {
 
-        if (goals[goal_count].goal_data.used == NULL) {
+        if (goals[goal_count].goal_data.used == 0) {
             goal_slot = goal_count;
             goals[goal_slot].goal_data.used = ACTIVE;
         } else {
             goal_count++;
 
             if (goal_count > 90) {
-                goals[0].goal_data.used = NULL;
+                goals[0].goal_data.used = 0;
                 goal_count = 0;
             }
         }
@@ -6472,7 +6493,6 @@ void render3d(buff_info *buffer, datapt viewx, datapt viewy, datapt viewz, datap
 					}
 				else
 					{
-					testVESA=0;
 					scrmode=VESAmode(&modelist[0]);
 					switch(scrmode)
 						{
@@ -7644,7 +7664,6 @@ void initobj(obj *object, ptlist points, facelist faces, datapt x, datapt y, dat
 int skyno;
 
 int init3d() {
-#ifdef IMPLEMENT_ME
     int i, j, mc_tot;
     word selector;
     BYTE *seg;
@@ -7661,13 +7680,11 @@ int init3d() {
     // Free memory?
     if (setup.verbose) {
         printf("Free memory = %d\n", get_mem_info());
-        fflush(stdout);
     }
 
     // Malloc data areas
     if (setup.verbose) {
         puts("Preparing memory areas...");
-        fflush(stdout);
     }
     if (setup.M8)
         mcaps = mcaps8;
@@ -7680,7 +7697,6 @@ int init3d() {
     }
     if (setup.verbose) {
         printf("Motion capture frames: %d\n", mc_tot);
-        fflush(stdout);
     }
     if (setup.M8) {
         if (
@@ -7721,7 +7737,6 @@ int init3d() {
     // Load texture maps and other files
     if (setup.verbose) {
         puts("Reading data files...");
-        fflush(stdout);
     }
     if (readrawfile(dataoffs, (BYTE *) load_offsets) == NULL) goto init3d_error;
     if (opendatafile(datafile) < 0) goto init3d_error;
@@ -8646,7 +8661,6 @@ int init3d() {
                 VESA_buff[0][0].buff_start + (int) menu_buff_h[i].scale_y * VESA_buff[0][0].buff_wid +
                 (int) menu_buff_h[i].scale_x;
     }
-#endif
     return (0);
 
     init3d_error:;
@@ -8675,7 +8689,6 @@ void setscreen() {
             VGAmode(scrmode);
             main_buff = MCGA_buff[setup.screen_size];
         } else {
-            testVESA = 0;
             scrmode = VESAmode(&modelist[0]);
             switch (scrmode) {
                 case 0x100:
@@ -9353,7 +9366,6 @@ int initman(int team, int capture) {
     ballld = 0;
 
 //	setpal();
-//	testVESA=0;
 //	scrmode=VESAmode(&modelist[0]);
     return (0);
 

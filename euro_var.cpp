@@ -53,8 +53,6 @@ char DOBmonth[16 * 20];
 char DOByear[16 * 20];
 char NamePREFIXtbl[16 * 20];
 
-offset_defn Offset_table[512];
-
 texture_info FrontendTextureDEFN = {NULL, 640, 480};
 pseudo_info FrontendBackgroundDEFN = {NULL, 640, 480, 640, 480};
 pseudo_info FrontendPseudoDEFN = {NULL, 640, 480, 640, 480};

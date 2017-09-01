@@ -1,6 +1,8 @@
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <vector>
 
 #include "eurodefs.h"
 #include "euro_fxd.h"
@@ -9,9 +11,11 @@
 #include "euro_def.h"
 #include "euro_var.h"
 #include "euro.equ"
-
+#include "euro_dsk.h"
 
 FILE *fp2;            // symbol creation file.
+
+static std::vector<offset_file_entry> Offset_table;
 
 //********************************************************************************************************************************
 
@@ -33,22 +37,45 @@ signed int ReadLine(FILE *fp, char *buf) {
     return (nc);
 }
 
-//********************************************************************************************************************************
+/* Loads an offset (.OFF) file and returns the offsets.
+ * Throws on error.
+*/
+std::vector<offset_file_entry> load_offset_file(const std::string &filename) {
+    std::vector<offset_file_entry> offsets;
 
-void ReadDataOffsetFile(const char *filename) {
-    FILE *fp1 = fopen(filename, "rb");
-    if (fp1 != nullptr) {
-        fread(Offset_table, sizeof(BYTE), 512 * 4, fp1);
-        fclose(fp1);
-        printf("Data Offset file loaded.\n");
-    } else
-        printf("Error loading Data Offset file.\n");
+    std::ifstream offset_fh;
+    offset_fh.exceptions(std::ifstream::badbit);
+
+    offset_fh.open(filename.c_str(), std::ifstream::binary);
+
+    offset_file_entry ofe;
+    while (!offset_fh.read((char*)(&ofe), sizeof(ofe)).eof()) {
+        offsets.push_back(ofe);
+    }
+
+    return offsets;
 }
 
+/* Replace the global offset table. This API is deprecated. */
+void ReadDataOffsetFile(const char *filename) {
+    try {
+        Offset_table = load_offset_file(filename);
+    }
+    catch(const std::exception &e)
+    {
+        printf("Error loading Data Offset file %s: %s\n", filename, e.what());
+    }
+}
 
-//********************************************************************************************************************************
-
+/* Read a file from a DAT file using the global offset table. This API is deprecated. */
 void ReadData(int file, const char *filename, BYTE *buffer) {
+    if((file / 8) >= Offset_table.size())
+    {
+        printf("Attempted to load file %d (%d), but Offset_table only has %lu elements\n",
+               file, (file / 8), (unsigned long)(Offset_table.size()));
+        return;
+    }
+
     FILE *fd = fopen(filename, "rb");
     if (fd != nullptr) {
         long seek_pos = Offset_table[file / 8].offset;

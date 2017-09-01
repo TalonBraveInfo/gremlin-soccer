@@ -10,7 +10,7 @@ extern	void 	DrawIMAGE( pseudo_info *, texture_info *, int, int, int, signed cha
 extern	void 	StorePSEUDObuffer( pseudo_info *, texture_info *, int, int, int );
 extern	void 	CopyFromBACKtoPSEUDObuffer( pseudo_info *, pseudo_info *, int, int, short, short );
 extern	int	PixelLengthOfString( char *, int );
-extern	void	DisplayString( int, int, char *, int, int, signed char, pseudo_info *, texture_info * );
+extern	void	DisplayString( int, int, const char *, int, int, signed char, pseudo_info *, texture_info * );
 extern	void 	CreateFilter( BYTE *, char, char, char, float, float, float );
 extern	void	ControlAnimations();
 extern	void	CopyDumpListToScreen();
