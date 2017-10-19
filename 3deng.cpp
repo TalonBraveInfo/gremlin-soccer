@@ -11,12 +11,14 @@
 
 /********************* HEADER FILES *********************/
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <fcntl.h>
 #include <time.h>
+#include <memory>
 
 #include "3deng.h"
 #include "data.h"
@@ -612,29 +614,6 @@ obj stad1, stad2, stad3, stad4;
 datapt stad1_p[MAX_STAD_PTS * 3], stad2_p[MAX_STAD_PTS * 3], stad3_p[MAX_STAD_PTS * 3], stad4_p[MAX_STAD_PTS * 3];
 word stad1_f[MAX_STAD_FACES * 6], stad2_f[MAX_STAD_FACES * 6], stad3_f[MAX_STAD_FACES * 6], stad4_f[MAX_STAD_FACES * 6];
 float st_w, st_l, st_h;
-
-
-//////////////////////////////////////////////////////////////////////////////////
-
-ptlist goal1a_p;
-ptlist goal2a_p;
-ptlist goal1ax_p;
-ptlist goal2ax_p;
-ptlist goal3a_p;
-
-ptlist goal1b_p;
-ptlist goal2b_p;
-ptlist goal3b_p;
-ptlist goal1bx_p;
-ptlist goal2bx_p;
-ptlist goal3bx_p;
-
-extern ptlist goal1c_p;
-extern ptlist goal2c_p;
-extern ptlist goal3c_p;
-extern ptlist goal1cx_p;
-extern ptlist goal2cx_p;
-extern ptlist goal3cx_p;
 
 
 /********************* FUNCTION CODE ********************/
@@ -3405,64 +3384,44 @@ char dataoffs[] = "EUROREND.OFF";
 char fapfile[] = "FAP.DAT";
 char fapoffs[] = "FAP.OFF";
 
-struct {
-    int offset, size;
-} load_offsets[MAX_FILES];
-FILE *fd;
+static std::auto_ptr<DATFile> current_file;
 
-int opendatafile(char *datafile) {
-    fd = fopen(datafile, "rb");
-    if (fd == NULL) {
-        puts("Can't find data file.");
-        return (-1);
+BYTE *readfile(int fileno, BYTE *address, size_t buf_size = 0) {
+    assert(address != NULL);
+
+    try {
+        if(buf_size == 0)
+        {
+            buf_size = current_file->chunk_size(fileno);
+        }
+
+        current_file->read_whole_chunk(fileno, address, buf_size);
     }
-    return (0);
-}
-
-void closedatafile() {
-    if (fd != NULL)
-        fclose(fd);
-    fd = NULL;
-}
-
-BYTE *readdatafile(int fileno, BYTE *address) {
-    BYTE *ptr;
-    int seek_pos;
-    size_t file_size;
-    seek_pos = load_offsets[fileno / 8].offset;
-    file_size = (size_t) load_offsets[fileno / 8].size;
-    fseek(fd, seek_pos, SEEK_SET);
-    if (address == NULL) { if ((ptr = (BYTE *) malloc(file_size * sizeof(BYTE))) == NULL) return (NULL); }
-    else
-        ptr = address;
-    fread(ptr, sizeof(BYTE), file_size, fd);
-    return (ptr);
-}
-
-BYTE *readfile(int fileno, BYTE *address) {
-    BYTE *ptr;
-    if ((ptr = readdatafile(fileno, address)) == NULL)
+    catch(...) {
         printf("Error loading data file %d\n", fileno);
-    return (ptr);
-}
+        return NULL;
+    }
 
-BYTE *readdatafilesection(int fileno, BYTE *address, int start_offset, int section_size) {
-    int seek_pos;
-    seek_pos = load_offsets[fileno / 8].offset + start_offset;
-    fseek(fd, seek_pos, SEEK_SET);
-    fread(address, sizeof(BYTE), (size_t) section_size, fd);
     return (address);
 }
 
-
 BYTE *readfileblock(int fileno, int blockno, int blocks, BYTE *address) {
-    int flen;
-    BYTE *ptr;
-    flen = load_offsets[fileno / 8].size;
-    if ((ptr = readdatafilesection(fileno, address + flen * blockno / blocks, flen * blockno / blocks,
-                                   flen * (blockno + 1) / blocks - flen * blockno / blocks)) == NULL)
+    size_t flen = current_file->chunk_size(fileno);
+
+    address += flen * blockno / blocks;
+
+    size_t block_off  = flen * blockno / blocks;
+    size_t block_size = flen * (blockno + 1) / blocks - flen * blockno / blocks;
+
+    try {
+        current_file->read_partial_chunk(fileno, address, block_off, block_size);
+    }
+    catch(...) {
         printf("Error loading data file %d\n", fileno);
-    return (ptr);
+        return NULL;
+    }
+
+    return (address);
 }
 
 
@@ -7673,7 +7632,6 @@ int init3d() {
 
     maps = NULL, scrb = NULL, sky = NULL, textures = NULL, filters = NULL, player_p = NULL, plyrtwtb = NULL;
     objlist = NULL, pollist = NULL, ptslist = NULL, rotlist = NULL, anim_data = NULL;
-    fd = NULL;
     for (i = 0; i < MAPPAGES + noloop + 2; i++)
         mapsel[i] = -1;
 
@@ -7738,9 +7696,8 @@ int init3d() {
     if (setup.verbose) {
         puts("Reading data files...");
     }
-    if (readrawfile(dataoffs, (BYTE *) load_offsets) == NULL) goto init3d_error;
-    if (opendatafile(datafile) < 0) goto init3d_error;
 
+    current_file = std::auto_ptr<DATFile>(new DATFile(datafile, dataoffs));
 
     if (setup.detail.stadia || network_on) {
         if (network_on) {
@@ -7925,15 +7882,15 @@ int init3d() {
         }
         if (readfile(BM_EXTRA2, maps[X_BM] + 180 * 256) == NULL) exit(1);
         if (
-                readfile(stadlist[setup.stadium].tmdfile, (BYTE *) &textures[S_TM]) == NULL ||
-                readfile(stadlist[setup.stadium].s1pfile, (BYTE *) &stad1_p) == NULL ||
-                readfile(stadlist[setup.stadium].s1ffile, (BYTE *) &stad1_f) == NULL ||
-                readfile(stadlist[setup.stadium].s2pfile, (BYTE *) &stad2_p) == NULL ||
-                readfile(stadlist[setup.stadium].s2ffile, (BYTE *) &stad2_f) == NULL ||
-                readfile(stadlist[setup.stadium].s3pfile, (BYTE *) &stad3_p) == NULL ||
-                readfile(stadlist[setup.stadium].s3ffile, (BYTE *) &stad3_f) == NULL ||
-                readfile(stadlist[setup.stadium].s4pfile, (BYTE *) &stad4_p) == NULL ||
-                readfile(stadlist[setup.stadium].s4ffile, (BYTE *) &stad4_f) == NULL
+                //readfile(stadlist[setup.stadium].tmdfile, (BYTE *) &textures[S_TM]) == NULL ||
+                readfile(stadlist[setup.stadium].s1pfile, (BYTE *) &stad1_p, sizeof(stad1_p)) == NULL ||
+                readfile(stadlist[setup.stadium].s1ffile, (BYTE *) &stad1_f, sizeof(stad1_f)) == NULL ||
+                readfile(stadlist[setup.stadium].s2pfile, (BYTE *) &stad2_p, sizeof(stad2_p)) == NULL ||
+                readfile(stadlist[setup.stadium].s2ffile, (BYTE *) &stad2_f, sizeof(stad2_f)) == NULL || // OVERFLOW
+                readfile(stadlist[setup.stadium].s3pfile, (BYTE *) &stad3_p, sizeof(stad3_p)) == NULL ||
+                readfile(stadlist[setup.stadium].s3ffile, (BYTE *) &stad3_f, sizeof(stad3_f)) == NULL ||
+                readfile(stadlist[setup.stadium].s4pfile, (BYTE *) &stad4_p, sizeof(stad4_p)) == NULL ||
+                readfile(stadlist[setup.stadium].s4ffile, (BYTE *) &stad4_f, sizeof(stad4_f)) == NULL
                 )
             goto init3d_error;
         if (
@@ -8273,7 +8230,6 @@ int init3d() {
                 )
             goto init3d_error;
     }
-    closedatafile();
 
 
     // Making simple pitch
@@ -8513,7 +8469,7 @@ int init3d() {
     initobj(&plhilight[6][5], plhi_p, plhi4_ff, 0, 0, 0, 1, 0);
 
     // Set ball
-    initobj(&ball, footy_p, footy_f, 640, 0, -400, 1, 0);
+//    initobj(&ball, footy_p, footy_f, 640, 0, -400, 1, 0); // IMPLEMENT_ME
 
     // Set ball shadow
     initobj(&ballshad, ballshad_p, ballshad_f, 640, 0, -400, 1, 0);
@@ -8597,8 +8553,7 @@ int init3d() {
     buff_ptr = (char *) (maps[S_BM]) + stadlist[setup.stadium].vmap;
     vidi_anim = 0;
     vidi_in = 0;
-    if (readrawfile(fapoffs, (BYTE *) load_offsets) == NULL) goto init3d_error;
-    if (opendatafile(fapfile) < 0) goto init3d_error;
+    current_file = std::auto_ptr<DATFile>(new DATFile(fapfile, fapoffs));
     if (setup.M8) {
 #ifdef JAPAN
         readfile(FAP_VIJAP,(BYTE *)anim_data);
@@ -8728,7 +8683,8 @@ void setscreen() {
 #ifdef BLASTER
                                                                                                                             else
 		{
-  		if (readrawfile(dataoffs,(BYTE *)load_offsets) == NULL) goto init3DB_error;
+  		//if (readrawfile(dataoffs,(BYTE *)load_offsets) == NULL) goto init3DB_error;
+  		
 		if (opendatafile(datafile) < 0 ) goto init3DB_error;
 		switch(stadlist[setup.stadium].pitchfile)
 			{

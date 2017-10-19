@@ -19,6 +19,7 @@ file(GLOB GREMLINSOCCER_SOURCE_FILES
 
         # New
         g_*.cpp
+        data.cpp
 
         # Original
         euro_*.cpp

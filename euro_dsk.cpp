@@ -56,6 +56,83 @@ std::vector<offset_file_entry> load_offset_file(const std::string &filename) {
     return offsets;
 }
 
+DATFile::DATFile(const std::string &dat_filename, const std::string &off_filename) {
+    this->dat_filename = dat_filename;
+    this->off_filename = off_filename;
+
+    offset_table = load_offset_file(off_filename);
+
+    dat_fh.exceptions(std::ifstream::badbit);
+    dat_fh.open(dat_filename.c_str(), std::ifstream::binary);
+}
+
+size_t DATFile::read_whole_chunk(unsigned chunk_no, void *buf, size_t bufsize) {
+    if((chunk_no / 8) >= offset_table.size()) {
+        fprintf(stderr, "Tried reading chunk %u/%u from %s\n", (chunk_no / 8), (unsigned)(offset_table.size()), dat_filename.c_str());
+        return 0;
+        abort();
+    }
+
+    chunk_no /= 8;
+
+    size_t chunk_size   = offset_table[chunk_no].size;
+    size_t chunk_offset = offset_table[chunk_no].offset;
+
+    dat_fh.clear();
+
+    dat_fh.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+    dat_fh.seekg(chunk_offset);
+
+    if(chunk_size > bufsize) {
+        fprintf(stderr, "Warning: Reading %lu/%lu bytes from %s:%u\n",
+                (unsigned long)(bufsize), (unsigned long)(chunk_size),
+                dat_filename.c_str(), chunk_no);
+    }
+
+    size_t to_read = std::min(bufsize, chunk_size);
+
+    dat_fh.exceptions(std::ifstream::badbit | std::ifstream::failbit | std::ifstream::eofbit);
+    dat_fh.read((char*)(buf), to_read);
+
+    return dat_fh.gcount();
+}
+
+size_t DATFile::read_partial_chunk(unsigned chunk_no, void *buf, size_t offset, size_t want_size) {
+    if((chunk_no / 8) >= offset_table.size()) {
+        abort();
+    }
+
+    chunk_no /= 8;
+
+    if(offset > offset_table[chunk_no].size) {
+        fprintf(stderr, "Warning: Tried reading past end of %s:%u\n", dat_filename.c_str(), chunk_no);
+        return 0;
+    }
+
+    size_t chunk_size   = offset_table[chunk_no].size   - offset;
+    size_t chunk_offset = offset_table[chunk_no].offset + offset;
+
+    if(chunk_size < want_size)
+    {
+        fprintf(stderr, "Warning: Expected to read %lu bytes from %s:%u, but only %lu are available\n",
+                (unsigned long)(want_size),
+                dat_filename.c_str(), chunk_no,
+                (unsigned long)(chunk_size));
+    }
+
+    dat_fh.clear();
+
+    dat_fh.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+    dat_fh.seekg(chunk_offset);
+
+    size_t to_read = std::min(want_size, chunk_size);
+
+    dat_fh.exceptions(std::ifstream::badbit | std::ifstream::failbit | std::ifstream::eofbit);
+    dat_fh.read((char*)(buf), to_read);
+
+    return dat_fh.gcount();
+}
+
 /* Replace the global offset table. This API is deprecated. */
 void ReadDataOffsetFile(const char *filename) {
     try {
